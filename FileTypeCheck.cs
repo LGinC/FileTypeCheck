@@ -198,7 +198,7 @@ public static class FileHeaderCheck
     {
         if(stream.CanSeek && stream.Position != 0)
             stream.Position = 0;
-        byte[] buffer = new byte[36];
+        Span<byte> buffer = stackalloc byte[36];
         stream.ReadExactly(buffer);
         var result = GetFileTypeResult(buffer.AsSpan());
         return result?.Extension switch
@@ -230,7 +230,7 @@ public static class FileHeaderCheck
     }
     private static FileTypeInfo? GetFileTypeByOffice2003(Stream stream)
      {
-        var buffer = new byte[3000];
+        Span<byte> buffer = stackalloc byte[3000];
         stream.ReadExactly(buffer);
         var content = Encoding.ASCII.GetString(buffer);
         var result = content switch
@@ -248,12 +248,11 @@ public static class FileHeaderCheck
         if(result == null)
         {
             //excel文件中的"Workbook"在文件末尾，所以需要循环读取
-            Span<byte> buffer1 = new byte[2048];
             int count;
             do
             {
-                count = stream.ReadAtLeast(buffer1, buffer1.Length, false);
-                if (Encoding.Unicode.GetString(buffer1).Contains("Workbook"))
+                count = stream.ReadAtLeast(buffer, buffer.Length, false);
+                if (Encoding.Unicode.GetString(buffer).Contains("Workbook"))
                 {
                     //office 97-2003
                     return new FileTypeInfo("Microsoft Excel binary format", "xls", null, "application/vnd.ms-excel");
