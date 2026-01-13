@@ -1,3 +1,6 @@
+# 推荐 https://github.com/mnovak001/MagikaSharp 识别效果更好
+<br/><br/><br/><br/>
+
 # FileTypeCheck
 Check File Type By MagicBytes
 
